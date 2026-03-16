@@ -3,234 +3,189 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blog Malam - Cerita Biasa Saja...</title>
+  <title>VibeTok - FYP Kamu Hari Ini</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+    body { margin:0; background:#0f0f0f; color:#fff; font-family:Arial; overflow-x:hidden; }
+    header { background:#111; padding:15px; text-align:center; font-size:2rem; }
+    .feed { display:grid; grid-template-columns:repeat(auto-fit, minmax(320px,1fr)); gap:15px; padding:20px; max-width:1200px; margin:auto; }
+    .post { background:#1a1a1a; border-radius:12px; overflow:hidden; }
+    .caption { padding:12px; font-size:1.1rem; }
+    .comment-box { padding:10px; background:#222; display:flex; gap:8px; }
+    input { flex:1; padding:10px; background:#000; color:white; border:none; border-radius:8px; }
+    button { background:#00f; color:white; border:none; padding:10px 15px; cursor:pointer; border-radius:8px; }
 
-    body {
-      margin: 0;
-      padding: 0;
-      background: #0a0000;
-      color: #ddd;
-      font-family: 'Creepster', cursive;
-      overflow-x: hidden;
-      cursor: url('https://i.imgur.com/8Y5Zf3K.png'), auto; /* cursor creepy (bisa ganti) */
-    }
+    .reply { padding:8px 12px; margin:5px; background:#222; border-left:4px solid #0f0; }
 
-    /* Background static + pulse merah */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(rgba(139,0,0,0.07), rgba(0,0,0,0.9));
-      animation: static 0.08s steps(5) infinite, pulse 4s infinite alternate;
-      pointer-events: none;
-      z-index: -1;
-    }
+    /* Efek corruption (muncul nanti) */
+    .corrupted { animation: static 0.1s infinite; background:linear-gradient(rgba(139,0,0,0.3),rgba(0,0,0,0.95)); }
+    @keyframes static { 0%{background-position:0 0} 100%{background-position:100% 100%} }
+    .glitch { animation: glitch 1.5s infinite; }
+    @keyframes glitch { 0%,100%{transform:translate(0)} 20%{transform:translate(-3px,2px)} 40%{transform:translate(3px,-2px)} }
 
-    @keyframes static {
-      0% { background-position: 0 0; }
-      100% { background-position: 100% 100%; }
-    }
-    @keyframes pulse {
-      0% { opacity: 0.6; }
-      100% { opacity: 1; }
-    }
+    #eyes { position:fixed; bottom:30px; right:30px; z-index:9999; display:none; gap:25px; pointer-events:none; }
+    .eye { width:60px; height:60px; background:#111; border-radius:50%; border:5px solid #500; overflow:hidden; }
+    .pupil { width:22px; height:22px; background:#f00; border-radius:50%; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); box-shadow:0 0 20px #f00; transition:all 0.05s; }
 
-    /* Glitch text */
-    .glitch {
-      position: relative;
-      color: #fff;
-      font-size: 3.5rem;
-      text-shadow: 0 0 10px #f00;
-      animation: glitch 2s infinite;
-    }
-    .glitch::before, .glitch::after {
-      content: attr(data-text);
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      opacity: 0.8;
-    }
-    .glitch::before {
-      animation: glitch-anim 1.2s infinite linear alternate-reverse;
-      color: #0ff;
-      left: 2px;
-      text-shadow: -2px 0 #f00;
-    }
-    .glitch::after {
-      animation: glitch-anim2 0.8s infinite linear alternate-reverse;
-      color: #f0f;
-      left: -2px;
-      text-shadow: 2px 0 #0f0;
-    }
-
-    @keyframes glitch-anim {
-      0% { clip: rect(20px, 9999px, 60px, 0); }
-      20% { clip: rect(80px, 9999px, 120px, 0); }
-      40% { clip: rect(40px, 9999px, 90px, 0); }
-      60% { clip: rect(70px, 9999px, 110px, 0); }
-      80% { clip: rect(30px, 9999px, 70px, 0); }
-      100% { clip: rect(50px, 9999px, 100px, 0); }
-    }
-    @keyframes glitch-anim2 {
-      0% { clip: rect(10px, 9999px, 50px, 0); }
-      20% { clip: rect(60px, 9999px, 100px, 0); }
-      40% { clip: rect(30px, 9999px, 80px, 0); }
-      60% { clip: rect(90px, 9999px, 140px, 0); }
-      80% { clip: rect(20px, 9999px, 60px, 0); }
-      100% { clip: rect(40px, 9999px, 90px, 0); }
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      background: rgba(20,0,0,0.85);
-      border: 2px solid #500;
-    }
-
-    .story {
-      margin: 40px 0;
-      line-height: 1.8;
-      font-size: 1.3rem;
-    }
-
-    /* Eyes following */
-    #eyes {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      z-index: 999;
-      width: 120px;
-      display: flex;
-      gap: 20px;
-    }
-    .eye {
-      width: 50px;
-      height: 50px;
-      background: #111;
-      border-radius: 50%;
-      position: relative;
-      overflow: hidden;
-      border: 4px solid #400;
-    }
-    .pupil {
-      width: 20px;
-      height: 20px;
-      background: #f00;
-      border-radius: 50%;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      transition: all 0.1s;
-      box-shadow: 0 0 15px #f00;
-    }
-
-    .jumpscare {
-      position: fixed;
-      inset: 0;
-      background: black;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-    .jumpscare img {
-      max-height: 95vh;
-      filter: brightness(1.3);
-    }
+    .jumpscare { position:fixed; inset:0; background:black; display:none; align-items:center; justify-content:center; z-index:99999; }
+    .jumpscare img { max-height:90vh; filter:brightness(1.4); }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1 class="glitch" data-text="Blog Malam">Blog Malam</h1>
-    <p style="text-align:center; color:#700; font-size:1.1rem;">Cerita sehari-hari... atau bukan?</p>
+<header>
+  <h1 id="title">VibeTok</h1>
+  <p id="subtitle" style="color:#888;">FYP Kamu • Trending Hari Ini</p>
+</header>
 
-    <div class="story" id="story1">
-      <h2>Hari ini biasa saja...</h2>
-      <p>Aku duduk di kamar sendirian. Lampu redup. Kamu lagi baca ini juga sendirian kan? Bagus.</p>
-    </div>
+<div class="feed" id="feed"></div>
 
-    <div class="story" id="story2">
-      <h2>Kenapa kamu masih di sini?</h2>
-      <p>Seharusnya kamu sudah pergi. Tapi kamu tetap scroll ya? Aku tahu kamu di sana...</p>
-    </div>
-  </div>
+<!-- Mata & jumpscare (hidden dulu) -->
+<div id="eyes">
+  <div class="eye"><div class="pupil" id="p1"></div></div>
+  <div class="eye"><div class="pupil" id="p2"></div></div>
+</div>
+<div class="jumpscare" id="jumpscare"><img src="scary.jpg" id="scareImg"></div>
 
-  <!-- Mata ngikutin -->
-  <div id="eyes">
-    <div class="eye"><div class="pupil" id="pupil1"></div></div>
-    <div class="eye"><div class="pupil" id="pupil2"></div></div>
-  </div>
+<audio id="breathing" loop><source src="https://www.orangefreesounds.com/wp-content/uploads/2019/08/Horror-scary-breathing.mp3" type="audio/mpeg"></audio>
 
-  <!-- Jumpscare layer -->
-  <div class="jumpscare" id="jumpscare">
-    <img src="scary.jpg" id="scareImg" alt="...">
-  </div>
+<script>
+// === POOL VIDEO NORMAL (pure simulasi algoritma) ===
+// Tambah ID Shorts viral normal sebanyak mungkin di sini (kucing, dance, makanan, dll)
+const normalPool = [
+  {videoId:"4T3XXXfJNMc", caption:"Kucing lucu banget lagi dance 🐱"},
+  {videoId:"A7_VQElv6TA", caption:"Cat dance challenge terbaru 2026 😂"},
+  {videoId:"UcmpTGUR6O8", caption:"Cute cat reels hari ini!"},
+  {videoId:"vfWkB5cWoY4", caption:"The funniest cats of 2026 😂"},
+  {videoId:"xv22tYYsMUY", caption:"Funny dance compilation"},
+  {videoId:"wn4LdkuVN5c", caption:"Cute cats and kittens dance"},
+  {videoId:"bRM7jamyIZA", caption:"Dancing cat memes 2026"},
+  {videoId:"HTn44jrTP2c", caption:"Most funny cat dance ever"},
+  {videoId:"y4o8x3AGVmg", caption:"Super cute cats compilation"},
+  {videoId:"5s52rNRsB34", caption:"Funny cat morning vibes"},
+  // Tambah lagi di sini kalau mau lebih banyak (algoritma makin "real")
+];
 
-  <!-- Audio napas hantu (loop pelan) -->
-  <audio id="breathing" loop autoplay>
-    <source src="https://www.orangefreesounds.com/wp-content/uploads/2019/08/Horror-scary-breathing.mp3" type="audio/mpeg">
-  </audio>
+// === VIDEO HORROR (KAMU BISA GANTI SESUKA HATI) ===
+const horrorPosts = [
+  {videoId:"scANT3qwhiU", caption:"..."},
+  {videoId:"Wogd_u0atjA", caption:"..."},
+  {videoId:"x_NJLxeUL24", caption:"..."},
+  {videoId:"SpuWu_N62Ns", caption:"..."}
+  // Ganti ID di atas dengan Shorts horor pilihanmu!
+];
 
-  <script>
-    // Mata ngikutin mouse
-    document.addEventListener('mousemove', (e) => {
-      const pupils = document.querySelectorAll('.pupil');
-      pupils.forEach(pupil => {
-        const eye = pupil.parentElement.getBoundingClientRect();
-        const eyeCenterX = eye.left + eye.width / 2;
-        const eyeCenterY = eye.top + eye.height / 2;
-        const angle = Math.atan2(e.clientY - eyeCenterY, e.clientX - eyeCenterX);
-        const distance = Math.min(12, Math.hypot(e.clientX - eyeCenterX, e.clientY - eyeCenterY) / 10);
-        pupil.style.transform = `translate(-50%, -50%) translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
-      });
+let commentCount = 0;
+let isCorrupted = false;
+const scaryReplies = ["DI BELAKANG KAMU 👁️","AKU LIHAT KAMU","JANGAN SCROLL LAGI","BEHIND YOU","AKU ADA DI KAMAR KAMU"];
+
+function getRandomNormalPosts(count) {
+  const shuffled = [...normalPool].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
+
+function renderPosts(posts, isHorror = false) {
+  const feed = document.getElementById('feed');
+  if (!isHorror) feed.innerHTML = ''; // clear kalau normal
+
+  posts.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'post';
+    div.innerHTML = `
+      <iframe width="100%" height="420" 
+        src="https://www.youtube.com/embed/${p.videoId}?autoplay=1&mute=1&loop=1&playlist=${p.videoId}&controls=0&modestbranding=1&rel=0" 
+        frameborder="0" allow="autoplay" allowfullscreen></iframe>
+      <div class="caption">${p.caption}</div>
+      <div class="comment-box">
+        <input type="text" placeholder="Komentar..." id="input-${i}">
+        <button onclick="submitComment(${i}, '${p.videoId}')">Kirim</button>
+      </div>
+      <div id="comments-${i}"></div>
+    `;
+    feed.appendChild(div);
+  });
+}
+
+window.submitComment = function(index, videoId) {
+  const input = document.getElementById(`input-${index}`);
+  const text = input.value.trim();
+  if (!text || isCorrupted) return;
+
+  const commentsDiv = document.getElementById(`comments-${index}`);
+  const userC = document.createElement('div');
+  userC.style.padding = '8px 12px'; userC.style.margin = '5px'; userC.style.background = '#222';
+  userC.innerHTML = `<b>Kamu:</b> ${text}`;
+  commentsDiv.appendChild(userC);
+
+  setTimeout(() => {
+    const botC = document.createElement('div');
+    botC.style.padding = '8px 12px'; botC.style.margin = '5px'; botC.style.background = '#222';
+    botC.innerHTML = `<b>VibeBot:</b> ${scaryReplies[Math.floor(Math.random()*scaryReplies.length)]}`;
+    commentsDiv.appendChild(botC);
+  }, 700);
+
+  input.value = '';
+  commentCount++;
+
+  if (commentCount >= 3 && !isCorrupted) corruptFYP();
+};
+
+// Infinite scroll simulasi algoritma (hanya di mode normal)
+window.addEventListener('scroll', () => {
+  if (isCorrupted) return;
+  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 300) {
+    const more = getRandomNormalPosts(4);
+    more.forEach(p => {
+      const i = document.querySelectorAll('.post').length;
+      const div = document.createElement('div');
+      div.className = 'post';
+      // (sama seperti renderPosts, tapi append saja)
+      div.innerHTML = `...`; // copy struktur dari renderPosts di atas
+      document.getElementById('feed').appendChild(div);
     });
+  }
+});
 
-    // Teks berubah jadi creepy setelah 8 detik
-    setTimeout(() => {
-      document.getElementById('story1').innerHTML = `
-        <h2>Hari ini biasa saja...</h2>
-        <p style="color:#900;">Aku duduk di kamar sendirian.<br>Kamu juga sendirian sekarang.<br>Aku bisa mendengar napasmu.</p>
-      `;
-      document.getElementById('story2').innerHTML = `
-        <h2>Kenapa kamu masih di sini?</h2>
-        <p style="color:#900;">Aku tahu kamu takut tutup tab.<br>Aku di belakang kamu sekarang.<br>Jangan menoleh.</p>
-      `;
-    }, 8000);
+function corruptFYP() {
+  isCorrupted = true;
+  document.body.classList.add('corrupted');
+  document.getElementById('title').classList.add('glitch');
+  document.getElementById('title').innerHTML = 'HantuTok 👁️';
+  document.getElementById('subtitle').innerHTML = 'FYP kamu sekarang MILIK AKU';
+  document.getElementById('subtitle').style.color = '#f00';
 
-    // Jumpscare setelah 18 detik + kalau scroll ke bawah
-    setTimeout(() => {
-      triggerJumpscare();
-    }, 18000);
+  // Ganti semua jadi horror pilihanmu
+  renderPosts(horrorPosts, true);
 
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 300) {
-        triggerJumpscare();
-      }
-    });
+  // Aktifkan efek serem
+  document.getElementById('eyes').style.display = 'flex';
+  document.getElementById('breathing').volume = 0.7;
+  document.getElementById('breathing').play();
 
-    function triggerJumpscare() {
-      const audio = document.getElementById('breathing');
-      audio.volume = 0.4;
+  setInterval(() => { if (Math.random() > 0.5) triggerJumpscare(); }, 15000);
+}
 
-      const scare = document.getElementById('jumpscare');
-      scare.style.display = 'flex';
-      
-      // Efek kedip + suara jerit tambahan (kalau mau tambah scream.mp3 sendiri)
-      setTimeout(() => scare.style.background = '#300', 150);
-      setTimeout(() => scare.style.background = 'black', 300);
+function triggerJumpscare() {
+  const scare = document.getElementById('jumpscare');
+  scare.style.display = 'flex';
+  setTimeout(() => scare.style.display = 'none', 800);
+}
 
-      setTimeout(() => {
-        scare.style.display = 'none';
-      }, 2800);
-    }
+// Mata ngikutin (hanya setelah corrupt)
+document.addEventListener('mousemove', e => {
+  if (!isCorrupted) return;
+  document.querySelectorAll('.pupil').forEach(p => {
+    const eye = p.parentElement.getBoundingClientRect();
+    const cx = eye.left + eye.width/2, cy = eye.top + eye.height/2;
+    const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
+    const dist = Math.min(18, Math.hypot(e.clientX-cx, e.clientY-cy)/8);
+    p.style.transform = `translate(-50%,-50%) translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px)`;
+  });
+});
 
-    // Volume napas pelan biar unsettling
-    document.getElementById('breathing').volume = 0.25;
-  </script>
+// START - mode normal murni
+const initialPosts = getRandomNormalPosts(8);
+renderPosts(initialPosts);
+document.getElementById('breathing').volume = 0;
+</script>
 </body>
 </html>
