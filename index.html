@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Selamat Datang di Blogku - Cerita Sehari-hari</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      transition: all 0.4s;
+    }
+    header {
+      background: #222;
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    article {
+      background: white;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 { color: #222; }
+    .normal-content { display: block; }
+
+    /* Jump scare layer - awalnya disembunyikan */
+    #jumpscare {
+      position: fixed;
+      inset: 0;
+      background: black;
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #jumpscare img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+    #jumpscare.active img {
+      opacity: 1;
+    }
+    /* Efek kedip-kedip gelap */
+    .flicker {
+      animation: flicker 0.08s infinite alternate;
+    }
+    @keyframes flicker {
+      0% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="normal-content">
+    <header>
+      <h1>Blog Pribadi Danz</h1>
+      <p>Cerita random, curhat, dan tips sehari-hari</p>
+    </header>
+
+    <div class="container">
+      <article>
+        <h2>Hari Ini Makan Apa Ya?</h2>
+        <p>Kemarin aku coba masak nasi goreng level dewa pake telor 3 butir + sosis. Enak banget bro, recommended! Kamu biasanya makan apa kalo lagi mager?</p>
+      </article>
+
+      <article>
+        <h2>Rekomendasi Film Minggu Ini</h2>
+        <p>Aku baru nonton film action terbaru, seru banget adegan kejar-kejarannya. Kalau kamu suka genre apa? Action? Drama? Horor? 😈</p>
+      </article>
+
+      <article>
+        <h2>Status Hubungan</h2>
+        <p>Single tapi happy. Kadang kangen juga sih... tapi ya sudahlah, fokus kerja dulu lah. Kamu gimana?</p>
+      </article>
+    </div>
+  </div>
+
+  <!-- Jump scare element -->
+  <div id="jumpscare">
+    <img src="https://i.imgur.com/0iZfXh.jpg" alt="JUMPSCARE" id="scareImg"> <!-- Ganti link gambar serem kamu -->
+  </div>
+
+  <audio id="scream" preload="auto">
+    <source src="https://www.soundjay.com/human/female-scream-1.mp3" type="audio/mpeg">
+    <!-- Alternatif link audio serem (cari sendiri di freesound.org atau youtube converter, pastikan format mp3) -->
+    <!-- Contoh lain: https://assets.mixkit.co/sfx/preview/mixkit-female-horror-scream-1003.mp3 -->
+  </audio>
+
+  <script>
+    // Durasi sebelum jumpscare muncul (dalam milidetik)
+    // 8000 = 8 detik, cocok buat orang mulai baca-baca dulu
+    const delay = 12000; // ubah sesuka hati, 5-20 detik biasanya paling efektif
+
+    setTimeout(() => {
+      // Mainkan audio (beberapa browser blok autoplay → user harus interact dulu)
+      const audio = document.getElementById('scream');
+      audio.volume = 0.9; // agak kenceng tapi ga pecah
+      audio.play().catch(e => console.log("Autoplay dicegah browser"));
+
+      // Tampilkan jumpscare
+      const scare = document.getElementById('jumpscare');
+      scare.style.display = 'flex';
+
+      // Kasih efek kedip + gambar muncul tiba-tiba
+      setTimeout(() => {
+        scare.classList.add('flicker');
+        document.getElementById('scareImg').style.opacity = '1';
+      }, 100);
+
+      // Biar tambah ngeri, setelah 3 detik balik normal lagi (opsional)
+      setTimeout(() => {
+        scare.style.display = 'none';
+        scare.classList.remove('flicker');
+        audio.pause();
+        audio.currentTime = 0;
+      }, 3500); // durasi jumpscare
+
+    }, delay);
+
+
+    // Bonus: biar lebih addictive → muncul lagi setelah scroll sampai bawah
+    window.addEventListener('scroll', () => {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+        // Uncomment kalau mau jumpscare muncul lagi pas scroll ke bawah
+        // setTimeout(() => { /* kode jumpscare lagi */ }, 1500);
+      }
+    });
+  </script>
+
+</body>
+</html>
